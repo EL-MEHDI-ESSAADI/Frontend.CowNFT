@@ -6,6 +6,7 @@ import './CandyMachine.css';
 import { useLocalStorage } from './../useLocalStorage';
 import idl from '../idl/cow_nft.json'
 import cowsigner from "cowsigner";
+import confetti from "canvas-confetti";
 
 
 
@@ -31,7 +32,13 @@ const CandyMachine = ({ walletAddress }) => {
   const [minted, setMinted] = useLocalStorage("minted", "");
 
 
-
+    function throwConfetti() {
+        confetti({
+            particleCount: 400,
+            spread: 70,
+            origin: {y: 0.6},
+        });
+    }
 
     const reloadWindow = () => {
         const itemsRedeemed = localStorage.getItem('minted')
@@ -105,13 +112,15 @@ const CandyMachine = ({ walletAddress }) => {
 
 
     try {
-      return (
-          await cowsigner.sendInstruction(method, appWallet, contractId)
+        const res = await cowsigner.sendInstruction(method, appWallet, contractId)
+
+        throwConfetti();
+        return ( res
       )
     } catch (e) {
       console.log(e);
     }
-        
+
     return [];
   };
 
